@@ -1,53 +1,87 @@
-//Somma tra vettori - algoritmo N = k*p
+    //Somma tra vettori - algoritmo N = k*p
 
-#include <stdio.h>
-#include <omp.h>
-#include <stdlib.h>
+    //VERSIONE 1
+
+    #include <stdio.h>
+    #include <omp.h>
+    #include <stdlib.h>
+    #include <time.h>
+
+    /*
+        SOMMA TRA VETTORI
+        Nucleo computazione full parallel
+        1a Versione - size esattamente divisibile per numero di thread
+    */
+
+void allocationVector(double **vector, int n);
+void fillVector(double *vector, int n);
+void printVector(double *vector, int n);
+void deallocationVector(double *vector);
 
 int main()
 {
-    int i, nloc, indice, t;
-    float *a, *b, *c;
-    int N;
+    int n, nloc, i, indice;
+    int idThread, numThreads;
+    double *vectorA, *vectorB, *vectorC;
 
-    printf("Inserisci dimensione N:  ");
-    scanf(" %d", &N);
+    printf("Inserisci dimensione per i vettori A e B:  ");
+    scanf("%d", &n);
 
-    a = (float*)calloc(N, sizeof(float));
-    b = (float*)calloc(N, sizeof(float));
-    c = (float*)calloc(N, sizeof(float));
+    srand(time(NULL));
 
-    printf("Inserire gli elementi del vettore a\n");
-    for (i=0;i<N;i++)
+    allocationVector(&vectorA, n);
+    fillVector(vectorA, n);
+    printf("Vettore A:  \n");
+    printVector(vectorA, n);  
+
+    allocationVector(&vectorB, n);
+    fillVector(vectorB, n);
+    printf("Vettore B:  \n");
+    printVector(vectorB, n);  
+
+    allocationVector(&vectorC, n);
+
+    #pragma omp parallel private(nloc, i, indice, idThread) shared(vectorA, vectorB, vectorC, numThreads)
     {
-        scanf("%f",&a[i]);
+        idThread = omp_get_thread_num();
+        numThreads = omp_get_num_threads();
+        nloc = n / numThreads;
+
+        printf("Hello from thread %d, numThread %d, numeri %d\n", idThread, numThreads, nloc);
+
+        for(i = 0; i < nloc; i++){
+            indice = i + nloc * idThread;
+            vectorC[indice] = vectorA[indice] + vectorB[indice];
+        }
     }
 
-    printf("Inserire gli elementi del vettore b\n");
-    for (i=0;i<N;i++)
-    {
-        scanf("%f",&b[i]);
-    }
+    printf("Vettore somma C:  \n");
+    printVector(vectorC, n);
 
-    printf("Vettore A: \n");
-    for (i=0;i<N;i++)
-    {
-        printf("%f  ",a[i]);
-    }
-
-    printf("\n\n");
-    printf("Vettore B: \n");
-    for (i=0;i<N;i++)
-    {
-        printf("%f  ",b[i]);
-    }
-
-    #pragma omp parallel private(nloc, i, indice) shared(a, b, c)
-    {
-        t = omp_get_num_threads();
-        nloc = N / t;
-        
-    }
+    deallocationVector(vectorA); 
+    deallocationVector(vectorB);
+    deallocationVector(vectorC);
 
     return 0;
+}
+
+void allocationVector(double **vector, int n) {
+    *vector = (double*)calloc(n, sizeof(double));
+}
+
+void fillVector(double *vector, int n) {
+    for (int i = 0; i < n; i++) {
+        vector[i] = rand()%10;
+    }
+}
+
+void printVector(double *vector, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%lf  ", vector[i]);
+    }
+    printf("\n");
+}
+
+void deallocationVector(double *vector) {
+    free(vector);
 }
