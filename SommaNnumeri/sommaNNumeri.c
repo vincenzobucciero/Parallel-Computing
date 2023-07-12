@@ -17,6 +17,8 @@ int main() {
     double *vector, sum, sumtot;
     int idThread, numThreads;
 
+    double t0, t1, t_tot;
+
     sumtot = 0;
 
     printf("Inserisci dimensione del vettore:  ");
@@ -28,6 +30,8 @@ int main() {
     fillVector(vector, n);
     printf("Vettore:  \n");
     printVector(vector, n);
+
+    t0 = omp_get_wtime();
 
     #pragma omp parallel private(i, nloc, step, sum, idThread) shared(sumtot, numThreads, resto)
     {
@@ -53,7 +57,13 @@ int main() {
         sumtot += sum;
     }
 
+    t1 = omp_get_wtime();
+
     printf("Somma totale: %lf\n", sumtot);
+
+    t_tot = t1 - t0;
+
+    printf("Tempo t0: %lf\nTempo t1: %lf\nTempo totale: %lf\n", t0, t1, t_tot);
     
     deallocationVector(vector);
 
