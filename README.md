@@ -6,7 +6,7 @@ This repository has been created specifically to support the Parallel Computing 
 
 Clone the repository to your local system using git clone:
 ```
-git clone https://github.com/Attilio-Di-Vicino/Calcolo-Parallelo.git
+git clone https://github.com/your-username/Calcolo-Parallelo.git
 ```
 
 # Repository contents
