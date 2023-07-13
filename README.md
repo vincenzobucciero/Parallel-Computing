@@ -1,31 +1,29 @@
-# Parallel-Computing
+# Parallel-Computing - Laboratory Part
 
-# Calcolo Parallelo - Parte Laboratorio
+This repository has been created specifically to support the Parallel Computing - Laboratory Part course within the Computer Science exam at the University of Naples "Parthenope". The OpenMP library is used for implementing the parallel programs in the repository.
 
-Questo repository è stato creato appositamente per supportare il corso di Calcolo Parallelo - Parte Laboratorio nell'ambito dell'esame di Informatica presso l'Università di Napoli "Parthenope". La libreria OpenMP viene utilizzata per l'implementazione dei programmi paralleli presenti nella repository.
+# Getting Started
 
-# Come iniziare
-
-Clona il repository sul tuo sistema locale utilizzano git clone:
+Clone the repository to your local system using git clone:
 ```
 git clone https://github.com/Attilio-Di-Vicino/Calcolo-Parallelo.git
 ```
 
-# Contenuto della repository
+# Repository contents
 
-La repository contiene diversi nuclei computazionali implementati utilizzando OpenMP. I nuclei computazionali inclusi sono i seguenti:
+The repository contains several computational kernels implemented using OpenMP. The included computational kernels are as follows:
 
-  *  Somma N numeri: Implementazione parallela della somma di N numeri.
-  *  Somma di due vettori di lunghezza N: Implementazione parallela della somma di due vettori di lunghezza N.
-  *  Prodotto scalare tra due vettori: Implementazione parallela del prodotto scalare tra due vettori.
-  *  Matrice x vettore: Implementazione parallela del prodotto tra una matrice e un vettore utilizzando due strategie di collezione dei dati: strategia 1 e strategia 2.
-  *  Decomposizione a blocchi della matrice: Implementazione parallela della decomposizione a blocchi di una matrice utilizzando tre strategie: strategia 1 blocchi riga, strategia 2 blocchi colonna e strategia 3          blocchi riga colonna.
-  *  SAXPY: Implementazione parallela del problema "SAXPY", un comune problema matematico che può essere parallelizzato e che viene utilizzato in vari campi.
-  *  Esercitazioni: Varie esercitazioni sul calcolo parallelo.
+  *  Sum of N numbers: Parallel implementation of the sum of N numbers.
+  *  Sum of two N-length vectors: Parallel implementation of the sum of two N-length vectors.
+  *  Scalar product of two vectors: Parallel implementation of the scalar product of two vectors.
+  *  Matrix x vector: Parallel implementation of the product between a matrix and a vector using two data collection strategies: strategy 1 and strategy 2.
+  *  Matrix block decomposition: Parallel implementation of the block decomposition of a matrix using three strategies: strategy 1 row blocks, strategy 2 column blocks, and strategy 3 row-column blocks.
+  *  SAXPY: Parallel implementation of the "SAXPY" problem, a common mathematical problem that can be parallelized and is used in various fields.
+  *  Exercises: Various exercises on parallel computing.
 
-# Utilizzo di OpenMP
+# Using OpenMP
 
-Tutti i programmi presenti nella repository sfruttano le potenzialità offerte dalla libreria OpenMP per la programmazione parallela. OpenMP fornisce direttive ad alto livello come #pragma omp parallel for,  #pragma omp parallel sections, ecc., che semplificano l'implementazione del parallelismo. Inoltre, in alcuni casi, viene utilizzato esclusivamenta la direttiva #pragma omp parallel per gestire manualmente la distribuzione del lavoro ai thread generati dopo la fork-join.
-Contribuire
+All the programs in the repository make use of the capabilities offered by the OpenMP library for parallel programming. OpenMP provides high-level directives such as #pragma omp parallel for, #pragma omp parallel sections, etc., which simplify the implementation of parallelism. Additionally, in some cases, the #pragma omp parallel directive is exclusively used to manually manage the distribution of work to the threads generated after the fork-join.
 
-Se desideri contribuire a questo progetto, puoi clonare la repository, apportare le modifiche desiderate e inviare una pull request. Sarà valutata e integrata se ritenuta appropriata. erimento per gli studenti che desiderano esplorare il mondo dell'informatica parallela e scoprire le meraviglie del calcolo distribuito.
+# Contributing
+If you wish to contribute to this project, you can clone the repository, make the desired modifications, and submit a pull request. It will be reviewed and integrated if deemed appropriate. This repository serves as a reference for students who wish to explore the world of parallel computing and discover the wonders of distributed computing.
