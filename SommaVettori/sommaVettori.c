@@ -1,87 +1,67 @@
-    //Somma tra vettori - algoritmo N = k*p
+//algortimo somma tra due vettori di dimensione N
 
-    //VERSIONE 1
+// -> Algoritmo full parallel
 
-    #include <stdio.h>
-    #include <omp.h>
-    #include <stdlib.h>
-    #include <time.h>
+// N esattamente divisibile per p (num core)
 
-    /*
-        SOMMA TRA VETTORI
-        Nucleo computazione full parallel
-        1a Versione - size esattamente divisibile per numero di thread
-    */
+#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+#include <time.h>
 
-void allocationVector(double **vector, int n);
-void fillVector(double *vector, int n);
-void printVector(double *vector, int n);
-void deallocationVector(double *vector);
+int main(int argc, char**argv) {
+    
+    int N, i, nloc, t, indice;
+    float *a, *b, *c;
 
-int main()
-{
-    int n, nloc, i, indice;
-    int idThread, numThreads;
-    double *vectorA, *vectorB, *vectorC;
-
-    printf("Inserisci dimensione per i vettori A e B:  ");
-    scanf("%d", &n);
+    printf("Inserisci dimensione N dei vettori: ");
+    scanf("%d", &N);
 
     srand(time(NULL));
+    
+    //allocazione vettori input (a, b) e output(c)
+    a = (float*)calloc(N, sizeof(float));
+    b = (float*)calloc(N, sizeof(float));
+    c = (float*)calloc(N, sizeof(float));
 
-    allocationVector(&vectorA, n);
-    fillVector(vectorA, n);
-    printf("Vettore A:  \n");
-    printVector(vectorA, n);  
+    //inizializzazione e stampa
+    for(i = 0; i < N; i++ )
+        a[i] = rand() % 100 + 1;
+    printf("Vettore A: \n");
+    for(i = 0; i < N; i++)
+        printf(" %f  ", a[i]);
+    printf("\n");
 
-    allocationVector(&vectorB, n);
-    fillVector(vectorB, n);
-    printf("Vettore B:  \n");
-    printVector(vectorB, n);  
+    //inizializzazione e stampa
+    for(i = 0; i < N; i++ )
+        b[i] = rand() % 100 + 1;
+    printf("Vettore B: \n");
+    for(i = 0; i < N; i++)
+        printf(" %f  ", b[i]);
+    printf("\n");
 
-    allocationVector(&vectorC, n);
-
-    #pragma omp parallel private(nloc, i, indice, idThread) shared(vectorA, vectorB, vectorC, numThreads)
+    //Inizia una regione parallela con le variabili i, indice, e nloc come variabili private (una copia per ogni thread)
+    //e condividendo i vettori a, b, e c tra tutti i thread.
+    #pragma omp parallel private(i, indice, nloc) shared(a, b, c)
     {
-        idThread = omp_get_thread_num();
-        numThreads = omp_get_num_threads();
-        nloc = n / numThreads;
-
-        printf("Hello from thread %d, numThread %d, numeri %d\n", idThread, numThreads, nloc);
-
-        for(i = 0; i < nloc; i++){
-            indice = i + nloc * idThread;
-            vectorC[indice] = vectorA[indice] + vectorB[indice];
+        //numero totale di thread nella regione parallela
+        t = omp_get_num_threads();
+        //dimensione locale (nloc) per ciascun thread in base alla dimensione totale N e al numero di thread t
+        nloc = N/t;
+        //Inizia un ciclo for per ogni thread, limitato alla sua porzione di dati
+        for(i = 0; i < nloc; i++)
+        {
+            //Calcola l'indice globale corrispondente all'elemento attualmente processato dal thread
+            indice = i + nloc * omp_get_thread_num();
+            //addizione vettoriale sugli elementi corrispondenti dei vettori a e b, assegnando il risultato al vettore c
+            c[indice] = a[indice] + b[indice];
         }
     }
 
-    printf("Vettore somma C:  \n");
-    printVector(vectorC, n);
-
-    deallocationVector(vectorA); 
-    deallocationVector(vectorB);
-    deallocationVector(vectorC);
+    printf("Vettore C: \n");
+    for(i = 0; i < N; i++)
+        printf(" %f  ", c[i]);
+    printf("\n");
 
     return 0;
-}
-
-void allocationVector(double **vector, int n) {
-    *vector = (double*)calloc(n, sizeof(double));
-}
-
-void fillVector(double *vector, int n) {
-    for (int i = 0; i < n; i++) {
-        vector[i] = rand()%10;
-    }
-}
-
-void printVector(double *vector, int n) {
-    for (int i = 0; i < n; i++) {
-        printf("%lf  ", vector[i]);
-    }
-    printf("\n");
-}
-
-void deallocationVector(double *vector) {
-    free(vector);
 }
