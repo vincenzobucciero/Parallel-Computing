@@ -1,93 +1,73 @@
-//Somma N numeri di un vettore - algoritmo N = k*p
+//Somma di N numeri in un vettore
 
-//1a STRATEGIA
+//Algoritmo con N dimensione del vettore NON esattamente divisibile per p (core)
+//in modo tale da poter essere generalizzato
+
+//Utilizzo della 1a strategia
 
 #include <stdio.h>
-#include <omp.h>
 #include <stdlib.h>
+#include <omp.h>
 #include <time.h>
 
-void allocationVector(double **vector, int n);
-void fillVector(double *vector, int n);
-void printVector(double *vector, int n);
-void deallocationVector(double *vector);
+int main(int argc, char**argv) {
+    
+    int N, i, nloc, t, indice, r, id, step;
+    float *a, sum, sumtot = 0;
 
-int main() {
-    int i, n, nloc, resto, step;
-    double *vector, sum, sumtot;
-    int idThread, numThreads;
-
-    double tempo0, tempo1, t_tot;
-
-    sumtot = 0;
-
-    printf("Inserisci dimensione del vettore:  ");
-    scanf("%d", &n);
+    //DIMENSIONE N DEL VETTORE
+    printf("Inserisci dimensione N del vettore: ");
+    scanf("%d", &N);
 
     srand(time(NULL));
+    
+    //allocazione vettore input (a)
+    a = (float*)calloc(N, sizeof(float));
 
-    allocationVector(&vector, n);
-    fillVector(vector, n);
-    printf("Vettore:  \n");
-    printVector(vector, n);
+    //inizializzazione e stampa
+    for(i = 0; i < N; i++ )
+        a[i] = rand() % 10 + 1;
+    printf("Vettore A: \n");
+    for(i = 0; i < N; i++)
+        printf(" %f  ", a[i]);
+    printf("\n");
 
-    tempo0 = omp_get_wtime();
-
-    #pragma omp parallel private(i, nloc, step, sum, idThread) shared(sumtot, numThreads, resto)
+    //PARALLELIZZAZIONE DEL CALCOLO DELLA SOMMA
+    #pragma omp parallel private(nloc, sum, id, step, i) shared(a, N, sumtot, r)
     {
-        idThread = omp_get_thread_num();
-        numThreads = omp_get_num_threads();
-        nloc = n / numThreads;
-        resto = n % numThreads;
+        //NUMERO DI THREAD DEL SISTEMA
+        t = omp_get_num_threads();
+        //DIMENSIONE LOCALE DEL VETTORE PER CIASCUN THREAD
+        nloc = N / t;
+        //CALCOLO DEL RESTO NEL CASO IN CUI N (DIMENSIONE) NON FOSSE ESATTAMENTE DIVISIBILE PER P (CORE)
+        r = N % t;
+        //IDENTIIFCATIVO DI CIASCUN THREAD
+        id = omp_get_thread_num();
 
-        if(idThread < resto){
+        //RIDISTRIBUZIONE DELLE SOMME CHE I CORE DEVONO FARE IN PIU
+        if(id < r)
+        {
             nloc++;
             step = 0;
-        } else {
-            step = resto;
         }
-
+        else
+            step = r;
+        
+        //INIZIALIZZAZIONE SOMMA LOCALE DI CIASCUN THREAD
         sum = 0;
-
-        for(i = 0; i < nloc; i++) {
-            sum = sum + vector[i + nloc * idThread + step];
+        //CALCOLO SOMMA LOCALE PER CIASCUN THREAD
+        for(i = 0; i < nloc; i++)
+        {
+            sum = sum + a[i+nloc*omp_get_thread_num()+step];
         }
-
-        #pragma omp critical
+        //STAMPA INFO PER DEBUG
+        printf("sono %d, di %d: numeri %d, resto=%d, la mia somma=%f\n", omp_get_thread_num(), t, nloc, r, sum);
+        //AGGIORNAMENTO SOMMA GLOBALE
         sumtot += sum;
     }
 
-    tempo1 = omp_get_wtime();
-
-    printf("Somma totale: %lf\n", sumtot);
-
-    t_tot = tempo1 - tempo0;
-
-    printf("Tempo t0: %lf\nTempo t1: %lf\nTempo totale: %lf\n", tempo0, tempo1, t_tot);
-    
-    deallocationVector(vector);
+    //STAMPA
+    printf("somma finale: %f\n", sumtot);
 
     return 0;
 }
-
-void allocationVector(double **vector, int n){
-    *vector = (double*)calloc(n, sizeof(double));
-}
-
-void fillVector(double *vector, int n){
-    for(int i = 0; i < n; i++){
-        vector[i] = rand()%10;
-    }
-}
-
-void printVector(double *vector, int n){
-    for(int i = 0; i < n; i++){
-        printf("%lf  ", vector[i]);
-    }
-    printf("\n");
-}
-
-void deallocationVector(double *vector){
-    free(vector);
-}
-
