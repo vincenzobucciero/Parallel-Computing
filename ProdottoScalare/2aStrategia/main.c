@@ -45,7 +45,7 @@ int main(int argc, char**argv) {
     }
 
     //Stampa Prodotto Scalare
-	printf( "Somma Totale: %d\n", sumtot );
+	printf("Somma Totale: %d\n", sumtot);
 
     //buona norma è liberare la memoria
 	free(a);
