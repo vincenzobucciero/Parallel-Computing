@@ -69,9 +69,9 @@ int main(int argc, char**argv) {
         printf("\n");
     }
 
-    printf("TEMPO t1 : %lf\n", t1);
-    printf("TEMPO t2 : %lf\n", t2);
-    printf("TEMPO TOTALE t_tot : %lf\n", t_tot);
+    printf("TEMPO t1 INIZIALE : %lf\n", t1);
+    printf("TEMPO t2 FINALE : %lf\n", t2);
+    printf("TEMPO TOTALE t_tot [FINALE-INIZIALE]: %lf\n", t_tot);
 
     return 0;
 }
