@@ -48,7 +48,9 @@ int main(int argc, char**argv) {
 
     t1 = omp_get_wtime();
 
-    #pragma omp parallel for shared(N, M, matrix) schedule(guided) num_threads(8)
+    //RISPETTO ALLA SECONDA STRATEGIA (SUDDIVISIONE PER BLOCCHI COLONNA), QUI SI DIVIDE LA MATRICE
+    //PER BLOCCHI RIGA, QUINDI SI INVERTE IL CICLO FOR
+    #pragma omp parallel for shared(N, M, matrix) schedule(guided)
     for(int i = 0; i < N; i++)
     {
         for(int j = 0; j < M; j++) 
