@@ -1,4 +1,4 @@
-//prodotto scakare tra due vettori
+//prodotto scalare tra due vettori
 
 //1a strategia
 
